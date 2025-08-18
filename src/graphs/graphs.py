@@ -52,7 +52,7 @@ def should_generate_or_retrieve(state: RecipeBotState) -> str:
         print("go to generate")
         return "generate"
 
-def grade_question(state: RecipeBotState) -> RecipeBotState:
+async def grade_question(state: RecipeBotState) -> RecipeBotState:
     """
         Determine whether the question is related to food recipe
 
@@ -65,7 +65,7 @@ def grade_question(state: RecipeBotState) -> RecipeBotState:
 
     question = state["question"]
     relevance_checker = is_question_recipe_related()
-    score = relevance_checker.invoke({"question": question})
+    score = await relevance_checker.ainvoke({"question": question})
 
     print(f"Question relevance graded as: {score.binary_score.lower()}")
 
@@ -109,7 +109,7 @@ def doc_relevance_grader():
 
     return retrieval_grader
 
-def grade_documents(state: RecipeBotState) -> RecipeBotState:
+async def grade_documents(state: RecipeBotState) -> RecipeBotState:
     """
         Document grading to determine whether a document is relevant to a user's question. 
 
@@ -127,7 +127,22 @@ def grade_documents(state: RecipeBotState) -> RecipeBotState:
     documents_relevant = "no"
 
     retrieval_grader = doc_relevance_grader()
-    score = retrieval_grader.invoke({"question": question, "document": "".join(documents)})
+    # First, ensure documents is iterable and elements are strings
+    if isinstance(documents, str):
+        # documents is already a string, no need to join
+        document_text = documents
+    elif hasattr(documents, '__iter__'):
+        # documents is iterable, convert all elements to strings and join with space
+        document_text = " ".join(str(doc) for doc in documents)
+    else:
+        # documents is neither string nor iterable, convert to string directly
+        document_text = str(documents)
+
+    print("Document text for grading:", document_text)
+
+    score = await retrieval_grader.ainvoke({"question": question, "document": document_text})
+
+    # score = await retrieval_grader.ainvoke({"question": question, "document": "".join(documents)})
     grade = score.binary_score
     print(f"Document relevance graded as: {grade}")
     if grade == 'yes':
@@ -140,11 +155,11 @@ def grade_documents(state: RecipeBotState) -> RecipeBotState:
         web_search = 'yes'
     return {"documents": documents, "question": question, "web_search": web_search, "documents_relevant": documents_relevant}
 
-def retrieve_documents(state: RecipeBotState) -> RecipeBotState:
+async def retrieve_documents(state: RecipeBotState) -> RecipeBotState:
     """Retrieve documents based on the question."""
     print("Retrieving documents...")
     question = state["question"]
-    documents = retriever_tool.invoke(question)
+    documents = await retriever_tool.ainvoke(question)
     
     if not documents:
         return {"documents": [], "question": question, "web_search": "yes"}
@@ -175,7 +190,7 @@ def decide_to_generate(state):
         print("go to generate...")
         return "generate"
     
-def web_search(state):
+async def web_search(state):
     """
         Web search based on question
 
@@ -190,7 +205,7 @@ def web_search(state):
     documents = state["documents"]
 
     # Web search
-    docs = search_tool.invoke({"query": question})
+    docs = await search_tool.ainvoke({"query": question})
 
     # Extract and concatenate content from all results
     if isinstance(docs, list) and all("content" in d for d in docs):
@@ -203,7 +218,7 @@ def web_search(state):
 
     return {"documents": documents, "question": question}
 
-def generate(state: RecipeBotState) -> RecipeBotState:
+async def generate(state: RecipeBotState) -> RecipeBotState:
     print("Generating answer...")
     system = """   
         You are my expert personal assistant. Your main task is to generate a detailed recipe from the provided context.
@@ -247,7 +262,7 @@ def generate(state: RecipeBotState) -> RecipeBotState:
 
     rag_chain = generate_prompt | llm
 
-    generation = rag_chain.invoke({"context": context_string, "question": question, "web_search": web_search, "recipe_relevant": recipe_relevant, "documents_relevant": documents_relevant})
+    generation = await rag_chain.ainvoke({"context": context_string, "question": question, "web_search": web_search, "recipe_relevant": recipe_relevant, "documents_relevant": documents_relevant})
 
     return {"documents": documents, "question": question, "generation": generation}
 
@@ -289,13 +304,11 @@ def create_rag_graph():
     return graph.compile()
 
 # Used for local testing, leaving it here for now
-def get_response_from_rag(question: str) -> str:
+async def get_response_from_rag(question: str) -> str:
     """Get response from RAG graph based on user question."""
     rag_graph = create_rag_graph()
-    response = rag_graph.invoke({"question": question})
+    response = await rag_graph.ainvoke({"question": question})
     print(response["generation"].content)
     return response["generation"].content
 
 app = create_rag_graph()
-
-__all__ = ["app"]
