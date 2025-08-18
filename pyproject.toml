@@ -2,7 +2,7 @@
 name = "recipe-bot"
 version = "0.0.1"
 description = "Langgraph agent for personal recipe."
-requires-python = "3.12"
+requires-python = "==3.12.*"
 
 dependencies = [
 "python-dotenv==1.1.1",
@@ -30,13 +30,11 @@ dependencies = [
 "chromadb==1.0.17"
 ]
 
-[project.optional-dependencies]
-dev = [
-    "ruff==0.4.10",
-    "mypy==1.10.0",
-    "pytest==8.2.2",
-    "langgraph-cli==0.1.43",
-]
+[tool.setuptools]
+packages = { find = { where = ["src"] } }
+
+[tool.uv]
+default-groups = "all"
 
 [tool.ruff]
 lint.select = [
@@ -59,3 +57,12 @@ convention = "google"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+
+[dependency-groups]
+dev = [
+    "ruff==0.4.10",
+    "mypy==1.10.0",
+    "pytest==8.2.2",
+    "langgraph-cli==0.1.43",
+    "langgraph-api>=0.2.132",
+]

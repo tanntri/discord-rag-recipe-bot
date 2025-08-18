@@ -1,7 +1,7 @@
 {
   "dependencies": ["."],
   "graphs": {
-    "graph": "./src/graphs.py:app"
+    "chef": "./src/graphs/graphs.py:app"
   },
   "env": ".env"
 }
