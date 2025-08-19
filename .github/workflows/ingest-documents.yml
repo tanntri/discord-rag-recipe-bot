@@ -3,7 +3,7 @@ name: Ingest Documents to Chroma
 on:
   push:
     branches:
-      - main
+      - master
     paths:
       - 'data/**' # Trigger the action on changes to files in the 'data' folder
       - 'pyproject.toml' # Also trigger on changes to the dependency file
