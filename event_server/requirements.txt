@@ -1,4 +1,0 @@
-discord.py==2.5.2
-python-dotenv==1.1.1
-langchain-core==0.3.74
-langgraph-sdk==0.2.0
