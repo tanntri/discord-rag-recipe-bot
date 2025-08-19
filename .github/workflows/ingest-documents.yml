@@ -1,0 +1,34 @@
+name: Ingest Documents to Chroma
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'data/**' # Trigger the action on changes to files in the 'data' folder
+      - 'pyproject.toml' # Also trigger on changes to the dependency file
+
+jobs:
+  ingest-documents:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install uv
+        run: pipx install uv
+
+      - name: Install dependencies with uv
+        run: uv sync
+          
+      - name: Run ingestion script
+        run: python src/utils/ingest.py
+        env:
+          CHROMA_CLOUD_HOST: ${{ secrets.CHROMA_CLOUD_HOST }}
+          CHROMA_API_KEY: ${{ secrets.CHROMA_API_KEY }}
+          CHROMA_COLLECTION_NAME: ${{ secrets.CHROMA_COLLECTION_NAME }}
