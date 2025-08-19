@@ -6,7 +6,6 @@ requires-python = "==3.12.*"
 
 dependencies = [
 "python-dotenv==1.1.1",
-"chroma==0.2.0",
 "langchain==0.3.27",
 "langchain-community==0.3.27",
 "langchain-core==0.3.74",
