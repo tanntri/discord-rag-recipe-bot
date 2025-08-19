@@ -30,5 +30,7 @@ jobs:
         run: python src/utils/ingest.py
         env:
           CHROMA_CLOUD_HOST: ${{ secrets.CHROMA_CLOUD_HOST }}
+          CHROMA_TENANT: ${{ secrets.CHROMA_TENANT }}
+          CHROMA_DATABASE: ${{ secrets.CHROMA_DATABASE }}
           CHROMA_API_KEY: ${{ secrets.CHROMA_API_KEY }}
           CHROMA_COLLECTION_NAME: ${{ secrets.CHROMA_COLLECTION_NAME }}
