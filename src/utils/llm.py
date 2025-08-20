@@ -13,8 +13,9 @@ class LLMModel:
         return self.model
     
 class EmbeddingModel:
-    def __init__(self, model_name: str = "mxbai-embed-large"):
+    def __init__(self, model_name: str = "text-embedding-3-small"):
         if not model_name:
+            # model_name = "mxbai-embed-large"
             model_name = "mxbai-embed-large"
         # self.embedding_model = OllamaEmbeddings(model=model_name)
         self.embedding_model = OpenAIEmbeddings(model=model_name)
