@@ -1,4 +1,4 @@
-from langchain_ollama import ChatOllama, OllamaEmbeddings
+# from langchain_ollama import ChatOllama, OllamaEmbeddings
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
 class LLMModel:
