@@ -2,7 +2,7 @@
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
 class LLMModel:
-    def __init__(self, model_name: str = "llama3.2"):
+    def __init__(self, model_name: str = "gpt-4o"):
         if not model_name:
             # model_name = "llama3.2"
             model_name = "gpt-4o"
