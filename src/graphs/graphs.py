@@ -4,6 +4,7 @@ from tools.tools import retriever_tool, search_tool
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.schema import Document
 from src.graphs._schema import RecipeBotState, IsItRecipeRelevant, GradeDocuments
+from langgraph.checkpoint.memory import MemorySaver
 
 llm_instance = LLMModel()
 llm = llm_instance.get_model()
@@ -267,7 +268,7 @@ async def generate(state: RecipeBotState) -> RecipeBotState:
     return {"documents": documents, "question": question, "generation": generation}
 
 def create_rag_graph():
-    graph = StateGraph(RecipeBotState)
+    graph = StateGraph(RecipeBotState, checkpoint=MemorySaver())
 
     graph.add_node("recipe_relevancy", grade_question)
     graph.add_node("retrieve", retrieve_documents)
