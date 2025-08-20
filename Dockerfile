@@ -1,4 +1,4 @@
-FROM langchain/langgraph-api:3.12
+FROM langchain/langgraph-api:3.11
 
 WORKDIR /app
 
