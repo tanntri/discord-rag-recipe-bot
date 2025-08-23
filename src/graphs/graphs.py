@@ -224,14 +224,17 @@ async def generate(state: RecipeBotState) -> RecipeBotState:
         You are my expert personal assistant. Your main task is to generate a detailed recipe from the provided context.
 
         **Instructions:**
-        1.  **First, determine the source of the recipe.**
+        1.  **First, in the case of no document is present, and/or web_search, recipe_relevant is no, 
+            * then skip step 2 and 3, straight to generating response informing user who you are and what
+            * your job is
+        2.  **First, determine the source of the recipe.**
             * If **Documents Relevant** is 'yes', the recipe is from "Tann's personal recipes."
             * If **Documents Relevant** is 'no' AND **Web Search** is 'yes', the recipe is from "outside sources."
             * In all other cases, do not state a source.
-        2.  **Next, generate the recipe.**
+        3.  **Next, generate the recipe.**
             * Use the provided `Context` to create a detailed recipe.
             * Be sure to include all ingredients and steps. **DO NOT SKIP ANY INFORMATION**.
-        3.  **Finally, structure your response.**
+        4.  **Finally, structure your response.**
             * Start your response with the source statement from step 1, if applicable.
             * Answer in a casual, caring tone, as if you're teaching your younger brother.
 
@@ -249,7 +252,7 @@ async def generate(state: RecipeBotState) -> RecipeBotState:
     )
     question = state["question"]
     documents = state.get("documents", [])
-    web_search = state.get("web_search", "")
+    web_search = state.get("web_search", "no")
     recipe_relevant = state.get("recipe_relevant", "no")
     documents_relevant = state.get("documents_relevant", "no")
 
